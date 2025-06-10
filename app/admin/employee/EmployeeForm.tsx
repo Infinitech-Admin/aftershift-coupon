@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 
 interface EmployeeFormProps {
@@ -26,8 +26,6 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   const [email, setEmail] = useState(defaultValues?.email || "");
   const [department, setDepartment] = useState(defaultValues?.department || "");
 
-  // Blank line before useEffect per padding-line-between-statements rule
-
   useEffect(() => {
     setEmployeeId(defaultValues?.employee_id || "");
     setFirstName(defaultValues?.first_name || "");
@@ -50,7 +48,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
       if (defaultValues && defaultValues.id) {
         await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/api/employee/${defaultValues.id}?_method=PUT`,
-          formData,
+          formData
         );
         toast.success("Employee updated successfully!");
       } else {
@@ -68,18 +66,18 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
         <label className="block font-medium" htmlFor="employeeId">
           Employee ID
         </label>
         <input
           id="employeeId"
+          required
           type="text"
+          className="border border-gray-300 rounded p-2 w-full"
           value={employeeId}
           onChange={(e) => setEmployeeId(e.target.value)}
-          required
-          className="border border-gray-300 rounded p-2 w-full"
         />
       </div>
 
@@ -89,11 +87,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         </label>
         <input
           id="firstName"
+          required
           type="text"
+          className="border border-gray-300 rounded p-2 w-full"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          required
-          className="border border-gray-300 rounded p-2 w-full"
         />
       </div>
 
@@ -103,11 +101,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         </label>
         <input
           id="lastName"
+          required
           type="text"
+          className="border border-gray-300 rounded p-2 w-full"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          required
-          className="border border-gray-300 rounded p-2 w-full"
         />
       </div>
 
@@ -117,11 +115,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         </label>
         <input
           id="email"
+          required
           type="email"
+          className="border border-gray-300 rounded p-2 w-full"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
-          className="border border-gray-300 rounded p-2 w-full"
         />
       </div>
 
@@ -131,11 +129,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({
         </label>
         <input
           id="department"
+          required
           type="text"
+          className="border border-gray-300 rounded p-2 w-full"
           value={department}
           onChange={(e) => setDepartment(e.target.value)}
-          required
-          className="border border-gray-300 rounded p-2 w-full"
         />
       </div>
 

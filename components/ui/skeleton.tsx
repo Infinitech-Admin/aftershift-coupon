@@ -1,4 +1,5 @@
-import { cn } from "@/libs/utils";
+import { cn } from "../../libs/utils"; // adjust path based on actual file location
+
 
 interface SkeletonProps {
   className?: string;
