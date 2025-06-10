@@ -13,7 +13,6 @@
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript"
-    
   ],
   "plugins": [
     "react",
@@ -28,11 +27,17 @@
       "jsx": true
     },
     "ecmaVersion": 12,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "settings": {
     "react": {
       "version": "detect"
+    },
+    "import/resolver": {
+      "typescript": {
+        "project": "./tsconfig.json"
+      }
     }
   },
   "rules": {
@@ -75,7 +80,10 @@
           }
         ],
         "newlines-between": "always",
-        "alphabetize": { "order": "asc", "caseInsensitive": true } // Sort imports alphabetically
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
       }
     ],
     "react/self-closing-comp": "warn",
