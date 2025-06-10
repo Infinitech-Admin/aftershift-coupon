@@ -1,41 +1,48 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { usePathname } from "next/navigation"
+import type React from "react";
+import { usePathname } from "next/navigation";
 
-import { Toaster } from "react-hot-toast"
-import { AdminSidebar } from "@/components/AdminSidebar"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { Toaster } from "react-hot-toast";
+import { AdminSidebar } from "@/components/AdminSidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const pathname = usePathname()
-  const isLoginPage = pathname === "/admin/login"
+  const pathname = usePathname();
 
-  if (isLoginPage) {
-    return (
-      <>
-        <main>{children}</main>
-        <Toaster position="top-right" />
-      </>
-    )
-  }
+  // Exclude sidebar on login page (adjust the path if different)
+  const isLoginPage = pathname === "/admin/login";
 
   return (
     <SidebarProvider>
-      <AdminSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <div className="h-4 w-px bg-border mx-2" />
-          <h1 className="text-xl font-semibold">Admin Dashboard</h1>
-        </header>
-        <main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
-      </SidebarInset>
+      <div className="flex min-h-screen w-full overflow-hidden">
+        {/* Sidebar is shown only if NOT on login page */}
+        {!isLoginPage && <AdminSidebar />}
+
+        {/* Main Content */}
+        <SidebarInset className="flex-1 flex flex-col overflow-auto">
+          {/* Header with Sidebar Trigger (hide if login page to avoid blank space) */}
+          {!isLoginPage && (
+            <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 z-10">
+              <SidebarTrigger className="md:flex" />
+              <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+            </header>
+          )}
+
+          {/* Main Content */}
+          <main>{children}</main>
+        </SidebarInset>
+      </div>
+
       <Toaster position="top-right" />
     </SidebarProvider>
-  )
+  );
 }

@@ -3,10 +3,10 @@
 import type React from "react";
 import type { Coupon } from "../types/coupon";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { Scan } from "lucide-react";
+import { Scan, Search } from "lucide-react";
 
 import CouponClaimModal from "./coupon-claim-modal";
 
@@ -31,6 +31,7 @@ const BarcodeScanner: React.FC = () => {
   const handleScan = async () => {
     if (!barcode.trim()) {
       toast.error("Please enter a barcode");
+
       return;
     }
 
@@ -47,11 +48,13 @@ const BarcodeScanner: React.FC = () => {
 
       if (coupon.is_claimed) {
         toast.error("This coupon has already been claimed");
+
         return;
       }
 
       if (couponDate < today) {
         toast.error("This coupon has expired and cannot be claimed");
+
         return;
       }
 
@@ -88,13 +91,6 @@ const BarcodeScanner: React.FC = () => {
     }
   };
 
-  // Automatically scan when barcode changes
-  useEffect(() => {
-    if (barcode.trim()) {
-      handleScan();
-    }
-  }, [barcode]);
-
   return (
     <>
       <Card className="w-full max-w-md">
@@ -122,6 +118,15 @@ const BarcodeScanner: React.FC = () => {
               onKeyPress={handleKeyPress}
             />
           </div>
+
+          <Button
+            className="w-full"
+            disabled={isScanning || !barcode.trim()}
+            onClick={handleScan}
+          >
+            <Search className="h-4 w-4 mr-2" />
+            {isScanning ? "Scanning..." : "Scan Coupon"}
+          </Button>
 
           <div className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
             <strong>Validation Rules:</strong>

@@ -3,8 +3,7 @@
 import * as React from "react";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
-import { cn } from "../../libs/utils"; // adjust path based on actual file location
-
+import { cn } from "@/libs/utils";
 
 const TooltipProvider = TooltipPrimitive.Provider;
 

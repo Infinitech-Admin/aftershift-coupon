@@ -1,9 +1,7 @@
-import { cn } from "../../libs/utils"; // adjust path based on actual file location
-
+import { cn } from "@/libs/utils";
 
 interface SkeletonProps {
   className?: string;
-  style?: React.CSSProperties; // Add this line
 }
 
 export function Skeleton({ className }: SkeletonProps) {

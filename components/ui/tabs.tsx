@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 
-import { cn } from "../../libs/utils"; // adjust path based on actual file location
+import { cn } from "@/libs/utils";
 
 const Tabs = TabsPrimitive.Root;
 

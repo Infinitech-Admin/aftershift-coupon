@@ -12,7 +12,8 @@
     "plugin:@next/next/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
-    "plugin:import/typescript"
+    "plugin:import/typescript",
+    "prettier"  // Integrate with Prettier for formatting
   ],
   "plugins": [
     "react",
@@ -27,23 +28,11 @@
       "jsx": true
     },
     "ecmaVersion": 12,
-    "sourceType": "module",
-    "project": "./tsconfig.json"
+    "sourceType": "module"
   },
   "settings": {
     "react": {
       "version": "detect"
-    },
-    "import/resolver": {
-      "alias": {
-        "map": [
-          ["@", "./src"]
-        ],
-        "extensions": [".ts", ".tsx", ".js", ".jsx", ".json"]
-      },
-      "typescript": {
-        "project": "./tsconfig.json"
-      }
     }
   },
   "rules": {
@@ -54,6 +43,7 @@
     "react-hooks/exhaustive-deps": "off",
     "jsx-a11y/click-events-have-key-events": "warn",
     "jsx-a11y/interactive-supports-focus": "warn",
+
     "no-unused-vars": "off",
     "unused-imports/no-unused-vars": "off",
     "unused-imports/no-unused-imports": "warn",
@@ -85,10 +75,7 @@
           }
         ],
         "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
+        "alphabetize": { "order": "asc", "caseInsensitive": true } // Sort imports alphabetically
       }
     ],
     "react/self-closing-comp": "warn",

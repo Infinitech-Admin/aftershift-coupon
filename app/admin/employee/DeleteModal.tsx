@@ -1,15 +1,14 @@
+import React, { useEffect, useState } from "react";
 import {
-  Button,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Button,
 } from "@heroui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
 
 interface Employee {
   id: number;

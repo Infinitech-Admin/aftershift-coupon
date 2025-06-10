@@ -71,7 +71,7 @@ interface EmployeeStats {
   last_claimed: string | null;
 }
 
-export default function Home() {
+export default function DynamicAdminDashboard() {
   // Analytics state and fetch
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loadingAnalytics, setLoadingAnalytics] = useState(false);
@@ -85,7 +85,9 @@ export default function Home() {
   const [refreshingEmployees, setRefreshingEmployees] = useState(false);
 
   // Common UI state
-  const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>({
+  const [selectedDateRange, setSelectedDateRange] = useState<
+    DateRange | undefined
+  >({
     from: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     to: new Date(),
   });
@@ -322,7 +324,7 @@ export default function Home() {
             >
               <SelectTrigger className="w-full bg-white border-gray-300 text-gray-900 min-h-[44px]">
                 <div className="flex items-center gap-2">
-                  <User  className="h-4 w-4 text-gray-500" />
+                  <User className="h-4 w-4 text-gray-500" />
                   <SelectValue placeholder="Select employee" />
                 </div>
               </SelectTrigger>
@@ -343,7 +345,7 @@ export default function Home() {
                   >
                     <div className="flex flex-col gap-1 w-full">
                       <div className="flex items-center gap-2">
-                        <User  className="h-4 w-4 text-blue-600" />
+                        <User className="h-4 w-4 text-blue-600" />
                         <span className="font-semibold text-gray-900">
                           {emp.first_name} {emp.last_name}
                         </span>
@@ -436,7 +438,7 @@ export default function Home() {
             )}
           </TabsTrigger>
           <TabsTrigger value="employees" aria-label="Employee stats tab">
-            <User  className="h-4 w-4 mr-2" />
+            <User className="h-4 w-4 mr-2" />
             Employee Stats
             {liveMode && (
               <div className="ml-2 h-1 w-1 bg-blue-500 rounded-full animate-pulse" />
@@ -538,7 +540,7 @@ export default function Home() {
                         <th className="border border-gray-300 px-3 py-2">
                           Total Coupons
                         </th>
-                        <th className="border border-gray-300 px -3 py-2">
+                        <th className="border border-gray-300 px-3 py-2">
                           Claimed
                         </th>
                         <th className="border border-gray-300 px-3 py-2">

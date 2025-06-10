@@ -15,8 +15,16 @@ const config = {
       },
     },
   },
-  darkMode: "class",
+
   plugins: [heroui()],
 };
 
 module.exports = config;
+module.exports = {
+  darkMode: 'class', // or 'media'
+  content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}

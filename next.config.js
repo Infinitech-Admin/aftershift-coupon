@@ -2,12 +2,17 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  server: {
+    actions: {
+      bodySizeLimit: "10mb", // Adjust this limit as per your needs
+    },
+  },
   async redirects() {
     return [
       {
         source: "/",
         destination: "/admin",
-        permanent: true, // Set to false if you want a temporary redirect
+        permanent: true, // Use 'false' if you want a temporary redirect
       },
     ];
   },
@@ -15,7 +20,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://infinitech-api5.site/api/:path*", // Updated Laravel API URL
+        destination: "http://localhost:8000/api/:path*", // your Laravel API
       },
     ];
   },

@@ -63,9 +63,8 @@ const CouponDashboard: React.FC = () => {
     expired: 0,
     available: 0,
   });
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPrinting, setIsPrinting] = useState(false);
+  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null); // State for selected coupon
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
   useEffect(() => {
     fetchEmployees();
@@ -160,6 +159,7 @@ const CouponDashboard: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 3 }, (_, i) => currentYear - 1 + i);
 
+  // Define holidays array including June 12 as Independence Day
   const holidays = [
     { date: "2025-01-01", name: "New Year's Day" },
     { date: "2025-02-25", name: "EDSA People Power Revolution" },
@@ -176,6 +176,7 @@ const CouponDashboard: React.FC = () => {
     { date: "2025-12-30", name: "Rizal Day" },
   ];
 
+  // Convert coupons and holidays to calendar events
   const calendarEvents: CalendarEvent[] = useMemo(() => {
     const couponEvents = coupons.map((coupon) => {
       const status = getCouponStatus(coupon);
@@ -191,17 +192,18 @@ const CouponDashboard: React.FC = () => {
     });
 
     const holidayEvents = holidays.map((holiday) => ({
-      id: `holiday${holiday.date}`,
+      id: `holiday-${holiday.date}`,
       title: holiday.name,
       start: new Date(holiday.date),
       end: new Date(holiday.date),
       allDay: true,
-      resource: { holiday: true },
+      resource: { holiday: true }, // Identify as a holiday event
     }));
 
     return [...couponEvents, ...holidayEvents];
   }, [coupons]);
 
+  // eventStyleGetter modified to strikethrough and disable pointer for claimed and expired coupons
   const eventStyleGetter = (event: CalendarEvent) => {
     const todayStr = new Date().toISOString().split("T")[0];
     const isHoliday = event.resource.holiday === true;
@@ -240,16 +242,19 @@ const CouponDashboard: React.FC = () => {
     return { style };
   };
 
+  // Prevent clicking claimed or expired coupons, show toast instead
   const onSelectEvent = (event: CalendarEvent) => {
+    // Holiday case
     if (event.resource.holiday) {
-    toast(
-  `Holiday: ${event.title}\nTake time to relax and enjoy with your loved ones! 💖😄`
-);
-
+      toast(
+        `Holiday: ${event.title} - 🎉 Take time to relax and enjoy with your loved ones! 💖😄`,
+        { icon: "🎊" },
+      );
 
       return;
     }
 
+    // Already claimed case
     if (event.resource.is_claimed) {
       toast("This coupon has already been claimed.", {
         icon: <CheckCheck className="text-red-600" />,
@@ -258,6 +263,7 @@ const CouponDashboard: React.FC = () => {
       return;
     }
 
+    // Expired coupon case
     const isExpired =
       event.resource.coupon_date < new Date().toISOString().split("T")[0];
 
@@ -269,168 +275,50 @@ const CouponDashboard: React.FC = () => {
       return;
     }
 
+    // If valid
     const coupon: Coupon = event.resource;
 
     setSelectedCoupon(coupon);
     setIsModalOpen(true);
   };
 
-  const handlePrint = () => {
-    const printContent = document.getElementById("barcode-print");
-    if (!printContent) return;
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
-
-    setIsPrinting(true);
-
-    // Clone the print content node
-    const clone = printContent.cloneNode(true) as HTMLElement;
-    // Remove the print button from the cloned content
-    const printButton = clone.querySelector("button");
-    if (printButton) {
-      printButton.remove();
-    }
-
-    const html = `
-      <html>
-        <head>
-          <title>Print Barcode</title>
-          <style>
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-                Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-              background: #fff;
-              color: #111827;
-              padding: 64px 40px;
-              -webkit-print-color-adjust: exact;
-              -moz-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-            .barcode-container {
-              max-width: 400px;
-              margin: 0 auto;
-              background: #ffffff;
-              box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
-              border-radius: 12px;
-              padding: 32px;
-              text-align: center;
-            }
-            .barcode-text {
-              font-family: monospace;
-              font-size: 28px;
-              font-weight: 700;
-              margin-bottom: 16px;
-              color: #111827;
-            }
-            .barcode-date {
-              font-size: 16px;
-              color: #6b7280;
-              margin-bottom: 28px;
-            }
-            img {
-              width: 100%;
-              max-width: 350px;
-              height: auto;
-              border-radius: 12px;
-              background: #fff;
-              box-shadow: 0 4px 8px rgb(0 0 0 / 0.05);
-              margin-bottom: 20px;
-              -webkit-print-color-adjust: exact;
-            }
-          </style>
-          <script>
-            function waitForImagesToLoad() {
-              const images = document.images;
-              let loadedCount = 0;
-              if (images.length === 0) {
-                window.print();
-                window.close();
-              }
-              for (let i = 0; i < images.length; i++) {
-                if (images[i].complete) {
-                  loadedCount++;
-                } else {
-                  images[i].addEventListener('load', () => {
-                    loadedCount++;
-                    if (loadedCount === images.length) {
-                      window.print();
-                      window.close();
-                    }
-                  });
-                  images[i].addEventListener('error', () => {
-                    loadedCount++;
-                    if (loadedCount === images.length) {
-                      window.print();
-                      window.close();
-                    }
-                  });
-                }
-              }
-              if (loadedCount === images.length) {
-                window.print();
-                window.close();
-              }
-            }
-            window.onload = waitForImagesToLoad;
-          </script>
-        </head>
-        <body>
-          <div class="barcode-container">
-            ${clone.innerHTML}
-          </div>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
-    printWindow.focus();
-
-    setTimeout(() => {
-      setIsPrinting(false);
-    }, 1000);
-  };
-
   return (
-    <div className="space-y-6 max-w-[1200px] mx-auto p-6 bg-white rounded-xl shadow-md">
+    <div className="space-y-6">
       {/* Filters */}
       <Card>
         <CardHeader>
-          {/* <CardTitle className="font-extrabold text-3xl text-gray-900">
-            Coupon Dashboard
-          </CardTitle> */}
-          {/* <CardDescription className="text-gray-500 text-base">
+          <CardTitle>Coupon Dashboard</CardTitle>
+          <CardDescription>
             View and manage meal coupons by employee and month
-          </CardDescription> */}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Employee Dropdown */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-gray-700">
+              <Label className="text-sm font-medium text-gray-700">
                 Employee
               </Label>
               <Select
                 value={selectedEmployee}
                 onValueChange={setSelectedEmployee}
               >
-                <SelectTrigger className="w-full bg-white border border-gray-300 text-gray-900 min-h-[44px] rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                <SelectTrigger className="w-full bg-white border-gray-300 text-gray-900 min-h-[44px]">
                   <div className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-gray-500" />
+                    <User className="h-4 w-4 text-gray-500" />
                     <SelectValue placeholder="Select employee" />
                   </div>
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-[300px] overflow-y-auto rounded-lg">
+                <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-[300px] overflow-y-auto">
                   {employees.map((employee) => (
                     <SelectItem
                       key={employee.id}
-                      className="text-gray-900 hover:bg-indigo-50 focus:bg-indigo-50 cursor-pointer px-3 py-3 border-b border-gray-100 last:border-b-0"
+                      className="text-gray-900 hover:bg-blue-50 focus:bg-blue-50 cursor-pointer px-3 py-3 border-b border-gray-100 last:border-b-0"
                       value={employee.id.toString()}
                     >
                       <div className="flex flex-col gap-1 w-full">
                         <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-indigo-600" />
+                          <User className="h-4 w-4 text-blue-600" />
                           <span className="font-semibold text-gray-900">
                             {employee.first_name} {employee.last_name}
                           </span>
@@ -447,19 +335,19 @@ const CouponDashboard: React.FC = () => {
 
             {/* Month Dropdown */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-gray-700">Month</Label>
+              <Label className="text-sm font-medium text-gray-700">Month</Label>
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                <SelectTrigger className="w-full bg-white border-gray-300 text-gray-900">
                   <div className="flex items-center gap-2">
-                    <CalendarIcon className="h-5 w-5 text-gray-500" />
+                    <CalendarIcon className="h-4 w-4 text-gray-500" />
                     <SelectValue placeholder="Select month" />
                   </div>
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectContent className="bg-white border border-gray-200 shadow-lg">
                   {months.map((month) => (
                     <SelectItem
                       key={month.value}
-                      className="text-gray-900 hover:bg-indigo-50 focus:bg-indigo-50 cursor-pointer px-3 py-2"
+                      className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100 cursor-pointer px-3 py-2"
                       value={month.value}
                     >
                       <span className="text-gray-900">{month.label}</span>
@@ -471,16 +359,16 @@ const CouponDashboard: React.FC = () => {
 
             {/* Year Dropdown */}
             <div className="space-y-2">
-              <Label className="text-sm font-semibold text-gray-700">Year</Label>
+              <Label className="text-sm font-medium text-gray-700">Year</Label>
               <Select value={selectedYear} onValueChange={setSelectedYear}>
-                <SelectTrigger className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500">
+                <SelectTrigger className="w-full bg-white border-gray-300 text-gray-900">
                   <SelectValue placeholder="Select year" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 shadow-lg rounded-lg">
+                <SelectContent className="bg-white border border-gray-200 shadow-lg">
                   {years.map((year) => (
                     <SelectItem
                       key={year}
-                      className="text-gray-900 hover:bg-indigo-50 focus:bg-indigo-50 cursor-pointer px-3 py-2"
+                      className="text-gray-900 hover:bg-gray-100 focus:bg-gray-100 cursor-pointer px-3 py-2"
                       value={year.toString()}
                     >
                       {year}
@@ -497,10 +385,8 @@ const CouponDashboard: React.FC = () => {
       {selectedEmployee && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-semibold text-xl text-gray-900">
-              Coupon Statistics
-            </CardTitle>
-            <CardDescription className="text-gray-500 text-sm">
+            <CardTitle>Coupon Statistics</CardTitle>
+            <CardDescription>
               Showing data for{" "}
               {
                 employees.find((e) => e.id.toString() === selectedEmployee)
@@ -551,10 +437,8 @@ const CouponDashboard: React.FC = () => {
       {selectedEmployee && (
         <Card>
           <CardHeader>
-            <CardTitle className="font-semibold text-xl text-gray-900">
-              Coupons Calendar
-            </CardTitle>
-            <CardDescription className="text-gray-500 text-sm">
+            <CardTitle>Coupons Calendar</CardTitle>
+            <CardDescription>
               {
                 employees.find((e) => e.id.toString() === selectedEmployee)
                   ?.first_name
@@ -574,14 +458,14 @@ const CouponDashboard: React.FC = () => {
               }
               defaultView="month"
               endAccessor="end"
-              eventPropGetter={eventStyleGetter}
+              eventPropGetter={eventStyleGetter} // Apply styles including disabled cursor for claimed and expired coupons
               events={calendarEvents}
               localizer={localizer}
               startAccessor="start"
               style={{ height: 500 }}
               views={["month"]}
               onNavigate={() => {}}
-              onSelectEvent={onSelectEvent}
+              onSelectEvent={onSelectEvent} // Handle event click
             />
           </CardContent>
         </Card>
@@ -598,19 +482,17 @@ const CouponDashboard: React.FC = () => {
         <DialogTrigger asChild>
           <Button className="hidden" variant="outline" />
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md bg-white rounded-xl shadow-lg p-6">
+        <DialogContent className="sm:max-w-md bg-white">
           <DialogHeader>
-            <DialogTitle className="text-gray-900 font-bold text-lg">
-              Coupon Barcode
-            </DialogTitle>
+            <DialogTitle className="text-gray-900">Coupon Barcode</DialogTitle>
           </DialogHeader>
           {selectedCoupon && (
-            <div id="barcode-print" className="space-y-6">
+            <div className="space-y-4">
               <div className="text-center">
-                <p className="font-mono text-2xl font-bold text-gray-900">
+                <p className="font-mono text-lg font-bold text-gray-900">
                   {selectedCoupon.barcode}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-600">
                   {new Date(selectedCoupon.coupon_date).toLocaleDateString(
                     "en-US",
                     {
@@ -622,25 +504,14 @@ const CouponDashboard: React.FC = () => {
                 </p>
               </div>
               {selectedCoupon.barcode_image_url && (
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center space-y-4">
                   <img
                     alt={`Barcode ${selectedCoupon.barcode}`}
-                    className="max-w-full h-auto border rounded-lg bg-white"
+                    className="max-w-full h-auto border rounded bg-white"
                     src={selectedCoupon.barcode_image_url || "/placeholder.svg"}
                   />
                 </div>
               )}
-              <div className="flex justify-center">
-                {!isPrinting && (
-                  <Button
-                    onClick={handlePrint}
-                    variant="outline"
-                    className="w-full max-w-xs"
-                  >
-                    Print Barcode
-                  </Button>
-                )}
-              </div>
             </div>
           )}
         </DialogContent>
@@ -650,4 +521,3 @@ const CouponDashboard: React.FC = () => {
 };
 
 export default CouponDashboard;
-

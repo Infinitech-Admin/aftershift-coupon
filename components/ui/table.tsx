@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import { cn } from "../../libs/utils"; // adjust path based on actual file location
-
+import { cn } from "@/libs/utils";
 
 const Table = React.forwardRef<
   HTMLTableElement,
