@@ -20,7 +20,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:8000/api/:path*", // your Laravel API
+        destination: "https://infinitech-api5.site/api/:path*", // your Laravel API in production
       },
     ];
   },
